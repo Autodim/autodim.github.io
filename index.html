@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto-Dim | Mozaik rooms to finished LayOut shop drawings</title>
+<meta name="description" content="Auto-Dim turns Mozaik room exports into fully dimensioned SketchUp LayOut shop-drawing packets: elevations, plans, 3D views, notes and title blocks, in minutes.">
+<meta property="og:title" content="Auto-Dim: Mozaik to finished LayOut shop drawings">
+<meta property="og:description" content="Elevations, plans, 3D views, dimensions and notes on every sheet, built for you from your Mozaik export.">
+<meta property="og:image" content="img/range-wall.jpg">
+<style>
+  :root{--ink:#1f2933;--muted:#5f6b7a;--line:#e3e7ec;--bg:#ffffff;--soft:#f5f7fa;--accent:#b45309;--accent-dark:#8f4207}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Inter,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;font-size:17px}
+  a{color:var(--accent)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  header.top{position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:5}
+  header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{font-weight:800;font-size:20px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+  .brand span{color:var(--accent)}
+  .btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:13px 22px;border-radius:8px;font-size:16px}
+  .btn:hover{background:var(--accent-dark)}
+  .btn.small{padding:9px 16px;font-size:14px}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+  .hero{padding:64px 0 40px}
+  .hero .wrap{display:grid;grid-template-columns:1fr 1.15fr;gap:44px;align-items:center}
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+  h1{font-size:46px;line-height:1.08;letter-spacing:-.03em;margin:10px 0 16px}
+  .lead{font-size:19px;color:var(--muted);margin:0 0 26px}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .note{font-size:14px;color:var(--muted);margin-top:14px}
+  video{width:100%;border-radius:10px;border:1px solid var(--line);box-shadow:0 18px 40px rgba(31,41,51,.14);background:#000;display:block}
+  .proof{background:var(--ink);color:#fff;padding:26px 0}
+  .proof .wrap{display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+  .proof q{font-size:22px;font-weight:700;quotes:"\201C" "\201D"}
+  .proof small{color:#c7ced6;display:block;font-size:14px;margin-top:4px}
+  section{padding:64px 0}
+  section.alt{background:var(--soft)}
+  h2{font-size:32px;letter-spacing:-.02em;margin:0 0 10px}
+  .sub{color:var(--muted);margin:0 0 34px;max-width:720px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .step{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px}
+  .step b{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;align-items:center;justify-content:center;margin-bottom:10px}
+  .step h3{margin:4px 0 6px;font-size:19px}
+  .step p{margin:0;color:var(--muted);font-size:16px}
+  .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .gallery figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .gallery img{width:100%;display:block;cursor:zoom-in}
+  .gallery figcaption{padding:10px 14px;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+  .features{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 32px;padding:0;margin:0;list-style:none}
+  .features li{padding-left:28px;position:relative}
+  .features li::before{content:"";position:absolute;left:0;top:8px;width:14px;height:8px;border-left:3px solid var(--accent);border-bottom:3px solid var(--accent);transform:rotate(-45deg)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:26px}
+  .card h3{margin:0 0 8px}
+  .price{font-size:40px;font-weight:800;letter-spacing:-.02em}
+  .price small{font-size:16px;color:var(--muted);font-weight:500}
+  details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin-bottom:10px}
+  summary{font-weight:700;cursor:pointer}
+  details p{margin:10px 0 0;color:var(--muted)}
+  .final{text-align:center}
+  footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px}
+  #zoom{position:fixed;inset:0;background:rgba(15,20,25,.9);display:none;align-items:center;justify-content:center;z-index:9;padding:20px;cursor:zoom-out}
+  #zoom img{max-width:100%;max-height:100%;border-radius:6px;background:#fff}
+  @media (max-width:860px){
+    .hero .wrap,.two,.steps,.gallery,.features{grid-template-columns:1fr}
+    h1{font-size:34px}
+    .hero{padding-top:36px}
+    section{padding:48px 0}
+  }
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="#">Auto<span>-</span>Dim</a>
+  <a class="btn small js-form" href="#join">Join the free beta</a>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
+    <div class="eyebrow">For Mozaik shops using SketchUp + LayOut</div>
+    <h1>Mozaik room in. Finished shop drawings out.</h1>
+    <p class="lead">Auto-Dim builds your elevations, plans and 3D views, then places every dimension, note and title block for you. A full, client-ready LayOut packet in minutes, not hours.</p>
+    <div class="cta-row">
+      <a class="btn js-form" href="#join">Join the free beta</a>
+      <a class="btn ghost" href="#samples">See real sheets</a>
+    </div>
+    <div class="note">Free until February 1, 2027. Founding shops keep $50/month for good.</div>
+  </div>
+  <video controls preload="metadata" poster="img/video-poster.jpg" playsinline>
+    <source src="demo.mp4" type="video/mp4">
+  </video>
+</div></div>
+
+<div class="proof"><div class="wrap">
+  <div><q>It replaced a full-time drafter in our shop.</q><small>International Cabinetry, Hendersonville NC, where Auto-Dim was built and is used on every job</small></div>
+</div></div>
+
+<section><div class="wrap">
+  <h2>How it works</h2>
+  <p class="sub">No new software to learn. It runs inside the SketchUp you already use, on the rooms you already export from Mozaik.</p>
+  <div class="steps">
+    <div class="step"><b>1</b><h3>Export from Mozaik</h3><p>Send the room to SketchUp the way you do now.</p></div>
+    <div class="step"><b>2</b><h3>Auto-Dim sets up the views</h3><p>One elevation per wall, a plan, and 3D views, with only the cabinets that belong in each.</p></div>
+    <div class="step"><b>3</b><h3>Get the packet</h3><p>Pick the rooms, click Build. Dimensions, notes, finish schedule, cover and title blocks, ready to review and send.</p></div>
+  </div>
+</div></section>
+
+<section class="alt" id="samples"><div class="wrap">
+  <h2>Real sheets, made by Auto-Dim</h2>
+  <p class="sub">These come straight from a real kitchen job with no hand edits. Click any sheet to see it full size.</p>
+  <div class="gallery">
+    <figure><img src="img/range-wall.jpg" alt="Kitchen range wall elevation with full dimensions and notes" loading="lazy"><figcaption>Range wall: widths, heights, appliance notes and drawer heights</figcaption></figure>
+    <figure><img src="img/fridge-wall.jpg" alt="Fridge wall elevation" loading="lazy"><figcaption>Fridge wall: glass doors shaded, stacked units measured once</figcaption></figure>
+    <figure><img src="img/plan.jpg" alt="Kitchen floor plan with dimensions" loading="lazy"><figcaption>Plan view: wall lengths and depths</figcaption></figure>
+    <figure><img src="img/kitchen-3d.jpg" alt="3D view of the kitchen" loading="lazy"><figcaption>3D views for client approval</figcaption></figure>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>What's on every packet</h2>
+  <p class="sub">The rules come from years of drawing kitchens by hand, so the sheets read the way a careful drafter would draw them.</p>
+  <ul class="features">
+    <li>Width strings that match your Mozaik cabinet sizes</li>
+    <li>Height strings on one side only when they match</li>
+    <li>Fillers, panels and scribes measured where you see them</li>
+    <li>Appliance and accessory notes pulled from Mozaik</li>
+    <li>Door swings, glass doors and drawer heights shown</li>
+    <li>Plans with wall lengths and depths</li>
+    <li>3D views and a cover sheet for client sign-off</li>
+    <li>Finish schedule from your Mozaik Room Notes</li>
+    <li>Drawing index and title block filled in on every sheet</li>
+    <li>Your shop's name, address and logo on the title block</li>
+    <li>Re-run a room and only that room's sheets update</li>
+    <li>Hand-added notes are kept and flagged for review</li>
+  </ul>
+</div></section>
+
+<section class="alt" id="join"><div class="wrap">
+  <h2>Join the free beta</h2>
+  <p class="sub">We're bringing on a small group of Mozaik shops to use Auto-Dim on real jobs and tell us what to improve.</p>
+  <div class="two">
+    <div class="card">
+      <h3>The beta</h3>
+      <div class="price">Free <small>until February 1, 2027</small></div>
+      <p>Full use on real jobs, every update, and direct help from the people who built it. In return: use it, and tell us when a sheet comes out wrong.</p>
+      <a class="btn js-form" href="#">Apply for the beta</a>
+    </div>
+    <div class="card">
+      <h3>Founding shops</h3>
+      <div class="price">$50 <small>/ month per shop, locked in</small></div>
+      <p>Beta shops that send feedback keep this price for as long as they stay subscribed, after paid plans launch.</p>
+      <p class="note">Requires Windows, SketchUp Pro with LayOut, and Mozaik. Drawings are in inches.</p>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Questions</h2>
+  <details><summary>Does it change anything in my Mozaik jobs?</summary><p>No. Auto-Dim only reads the room you export to SketchUp. It writes its packet and its own backups into the job folder and never edits your Mozaik files.</p></details>
+  <details><summary>Can I still edit the drawings?</summary><p>Yes. The packet is a normal LayOut file. Add notes or dimensions by hand. When you re-run a room, your hand-added items are kept and flagged so you can check them against the new drawing.</p></details>
+  <details><summary>Will it work with my Mozaik library?</summary><p>It reads Mozaik's own room data, so most libraries work as-is. The beta exists to find the ones that don't. Every problem report makes it better for everyone.</p></details>
+  <details><summary>Can I use my own title block?</summary><p>The beta uses a clean standard template with your shop name, address and logo. Support for your own LayOut template is planned.</p></details>
+  <details><summary>Does my job data get sent anywhere?</summary><p>No. Auto-Dim runs entirely on your computer. It only sends something if you choose to email us a problem report.</p></details>
+  <details><summary>What does it cost after the beta?</summary><p>Founding beta shops keep $50/month. Pricing for everyone else will be announced at launch.</p></details>
+</div></section>
+
+<section class="alt final"><div class="wrap">
+  <h2>Stop drawing what Mozaik already knows.</h2>
+  <p class="sub" style="margin:0 auto 24px">Spend your time building cabinets, not dimension strings.</p>
+  <a class="btn js-form" href="#">Join the free beta</a>
+</div></section>
+
+<footer><div class="wrap">
+  © <span id="yr">2026</span> International Cabinetry · Hendersonville, NC · <a href="mailto:internationalcabinetry@gmail.com">internationalcabinetry@gmail.com</a><br>
+  Auto-Dim is an independent product. It is not made, sponsored or endorsed by Mozaik, Cyncly, Trimble or SketchUp. Those names belong to their owners.
+</div></footer>
+
+<div id="zoom"><img alt=""></div>
+
+<script>
+  // ====== EDIT THIS ONE LINE: paste your Google Form share link between the quotes ======
+  var FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe6HE5qPQ6fx3UK68RCUeDNRKdYMstlQNnyYSixBbbQhTiz1A/viewform";
+
+  document.querySelectorAll('.js-form').forEach(function (a) {
+    if (FORM_URL.indexOf('http') === 0) { a.href = FORM_URL; a.target = '_blank'; a.rel = 'noopener'; }
+    else { a.href = '#join'; }
+  });
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var z = document.getElementById('zoom');
+  document.querySelectorAll('.gallery img').forEach(function (img) {
+    img.addEventListener('click', function () { z.querySelector('img').src = img.src; z.style.display = 'flex'; });
+  });
+  z.addEventListener('click', function () { z.style.display = 'none'; });
+</script>
+</body>
+</html>
